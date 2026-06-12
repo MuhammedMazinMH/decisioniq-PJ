@@ -11,12 +11,6 @@ export type UploadedFile = {
   file?: File
 }
 
-const SAMPLE_FILES: UploadedFile[] = [
-  { id: 's1', name: 'Offer_AI_Engineer.pdf', size: '248 KB' },
-  { id: 's2', name: 'Offer_MNC_FullTime.pdf', size: '192 KB' },
-  { id: 's3', name: 'Resume_2026.docx', size: '86 KB' },
-]
-
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
@@ -34,12 +28,7 @@ export function DecisionUpload({
   const inputRef = useRef<HTMLInputElement>(null)
 
   function addFiles(list: FileList | null) {
-    if (!list || list.length === 0) {
-      // Demo fallback: add a sample file when no real file is provided
-      const next = SAMPLE_FILES.find((s) => !files.some((f) => f.name === s.name))
-      if (next) onChange([...files, next])
-      return
-    }
+    if (!list || list.length === 0) return
     const incoming: UploadedFile[] = Array.from(list).map((f, i) => ({
       id: `${Date.now()}-${i}`,
       name: f.name,
@@ -51,11 +40,9 @@ export function DecisionUpload({
 
   return (
     <div className="flex flex-col gap-4">
-      <div
-        role="button"
+      <label
+        htmlFor="decision-file-upload"
         tabIndex={0}
-        aria-label="Upload documents"
-        onClick={() => inputRef.current?.click()}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -73,7 +60,7 @@ export function DecisionUpload({
           addFiles(e.dataTransfer.files)
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center transition-colors',
+          'flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50',
           dragging
             ? 'border-primary bg-primary/10'
             : 'border-border bg-card/40 hover:border-primary/50 hover:bg-card/60',
@@ -84,20 +71,27 @@ export function DecisionUpload({
         </span>
         <p className="text-sm font-medium">
           Drag &amp; drop files, or{' '}
-          <span className="text-primary">browse</span>
+          <span className="text-primary underline underline-offset-4">
+            browse
+          </span>
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
           Supports PDF, DOCX, and TXT
         </p>
         <input
           ref={inputRef}
+          id="decision-file-upload"
           type="file"
           multiple
-          accept=".pdf,.docx,.txt"
+          accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
           className="sr-only"
-          onChange={(e) => addFiles(e.target.files)}
+          aria-label="Upload documents"
+          onChange={(e) => {
+            addFiles(e.target.files)
+            e.target.value = ''
+          }}
         />
-      </div>
+      </label>
 
       {files.length > 0 && (
         <ul className="grid gap-3 sm:grid-cols-2">

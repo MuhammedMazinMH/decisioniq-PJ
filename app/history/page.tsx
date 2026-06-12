@@ -18,6 +18,17 @@ import { DECISION_TYPES, HISTORY } from '@/lib/decision-data'
 
 type SortKey = 'recent' | 'oldest' | 'confidence'
 
+const TYPE_ITEMS: Record<string, string> = {
+  all: 'All types',
+  ...Object.fromEntries(DECISION_TYPES.map((t) => [t, t])),
+}
+
+const SORT_ITEMS: Record<SortKey, string> = {
+  recent: 'Most recent',
+  oldest: 'Oldest first',
+  confidence: 'Highest confidence',
+}
+
 export default function HistoryPage() {
   const [query, setQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
@@ -72,7 +83,11 @@ export default function HistoryPage() {
             aria-label="Search decisions"
           />
         </div>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <Select
+          items={TYPE_ITEMS}
+          value={typeFilter}
+          onValueChange={(v) => setTypeFilter(v as string)}
+        >
           <SelectTrigger className="h-11 sm:w-56" aria-label="Filter by type">
             <SelectValue placeholder="All types" />
           </SelectTrigger>
@@ -85,7 +100,11 @@ export default function HistoryPage() {
             ))}
           </SelectContent>
         </Select>
-        <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+        <Select
+          items={SORT_ITEMS}
+          value={sort}
+          onValueChange={(v) => setSort(v as SortKey)}
+        >
           <SelectTrigger className="h-11 sm:w-44" aria-label="Sort decisions">
             <SelectValue />
           </SelectTrigger>

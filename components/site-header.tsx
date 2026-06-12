@@ -13,14 +13,14 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 md:px-6">
-        <a href="#" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
             <BrainCircuit className="size-5" aria-hidden="true" />
           </span>
           <span className="text-base font-semibold tracking-tight">
             DecisionIQ
           </span>
-        </a>
+        </Link>
 
         <nav
           aria-label="Main navigation"

@@ -307,7 +307,11 @@ export default function DecisionPage() {
           <Label htmlFor="decision-type" className="sr-only">
             Decision type
           </Label>
-          <Select value={type} onValueChange={setType}>
+          <Select
+            items={Object.fromEntries(DECISION_TYPES.map((t) => [t, t]))}
+            value={type || null}
+            onValueChange={(v) => setType((v as string) ?? '')}
+          >
             <SelectTrigger id="decision-type" className="h-11 w-full sm:max-w-sm">
               <SelectValue placeholder="Select a decision type" />
             </SelectTrigger>
