@@ -10,6 +10,7 @@ const footerLinks = [
   { label: 'History', href: '/history' },
 ]
 
+// Final CTA + footer navigation
 export function SiteFooter() {
   return (
     <footer className="relative border-t border-border">

@@ -48,6 +48,7 @@ const examples = [
   },
 ]
 
+// Template decision cards linking to demo scenarios
 export function ExampleDecisions() {
   return (
     <section
