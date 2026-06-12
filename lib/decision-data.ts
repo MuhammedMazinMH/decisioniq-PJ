@@ -26,6 +26,14 @@ export type ReasoningNode = {
   detail: string
 }
 
+export type ScenarioBias = {
+  name: string
+  explanation: string
+  impact: string
+  recommendation: string
+  severity: 'low' | 'medium' | 'high'
+}
+
 export type Scenario = {
   id: string
   title: string
@@ -38,6 +46,7 @@ export type Scenario = {
   confidence: number
   summary: string
   reasoning: ReasoningNode[]
+  biases?: ScenarioBias[]
 }
 
 export const PRIORITIES = [
@@ -127,6 +136,26 @@ export const SCENARIOS: Scenario[] = [
       { step: 'Future Simulation', detail: '3-year projection favors AI specialization demand.' },
       { step: 'Recommendation', detail: 'AI Engineer Internship at 89% confidence.' },
     ],
+    biases: [
+      {
+        name: 'Social Proof Bias',
+        explanation:
+          'Your notes reference what classmates chose more often than your own stated goals.',
+        impact: 'May pull you toward the popular MNC offer over the better personal fit.',
+        recommendation:
+          'Re-rank the options using only your own priority list, ignoring peer choices.',
+        severity: 'medium',
+      },
+      {
+        name: 'Loss Aversion',
+        explanation:
+          'The salary gap is weighted as a loss even though learning ranked above salary for you.',
+        impact: 'Overweights short-term compensation against long-term growth.',
+        recommendation:
+          'Frame the stipend gap as a 12-month investment with a measurable skill return.',
+        severity: 'low',
+      },
+    ],
     options: [
       {
         id: 'ai-engineer',
@@ -207,6 +236,17 @@ export const SCENARIOS: Scenario[] = [
       { step: 'Future Simulation', detail: 'Comparable trajectories; Google slightly ahead in AI.' },
       { step: 'Recommendation', detail: 'Google Internship at 82% confidence.' },
     ],
+    biases: [
+      {
+        name: 'Bandwagon Bias',
+        explanation:
+          'Brand prestige appears in your reasoning more than concrete team or project fit.',
+        impact: 'Either brand could be chosen for status rather than trajectory.',
+        recommendation:
+          'Compare the specific teams and projects on offer, not the logos.',
+        severity: 'low',
+      },
+    ],
     options: [
       {
         id: 'google',
@@ -257,6 +297,26 @@ export const SCENARIOS: Scenario[] = [
       { step: 'Risk Assessment', detail: 'MBA ROI sensitive to placement.' },
       { step: 'Future Simulation', detail: 'Staying compounds faster near-term.' },
       { step: 'Recommendation', detail: 'Continue Working at 71% confidence.' },
+    ],
+    biases: [
+      {
+        name: 'Sunk Cost Fallacy',
+        explanation:
+          'Time already spent preparing for entrance exams is cited as a reason to pursue the MBA.',
+        impact: 'Past preparation costs may push you into a path that no longer fits your goals.',
+        recommendation:
+          'Evaluate the MBA purely on forward-looking ROI; prep effort is already spent either way.',
+        severity: 'high',
+      },
+      {
+        name: 'Status Quo Bias',
+        explanation:
+          'Comfort with the current role appears as a reason to stay, separate from growth evidence.',
+        impact: 'Could mask a plateau that an external move would reveal.',
+        recommendation:
+          'Set explicit 12-month growth milestones for staying; revisit if unmet.',
+        severity: 'medium',
+      },
     ],
     options: [
       {
@@ -309,6 +369,17 @@ export const SCENARIOS: Scenario[] = [
       { step: 'Future Simulation', detail: 'AI Eng demand outpaces DS over 3 years.' },
       { step: 'Recommendation', detail: 'AI Engineer at 86% confidence.' },
     ],
+    biases: [
+      {
+        name: 'Recency Bias',
+        explanation:
+          'Recent AI hype headlines feature prominently in your stated motivation.',
+        impact: 'Current market excitement may be extrapolated too far into the future.',
+        recommendation:
+          'Stress-test the choice against a scenario where AI hiring cools for 2 years.',
+        severity: 'medium',
+      },
+    ],
     options: [
       {
         id: 'ai-eng',
@@ -359,6 +430,17 @@ export const SCENARIOS: Scenario[] = [
       { step: 'Risk Assessment', detail: 'Startup carries funding/runway risk.' },
       { step: 'Future Simulation', detail: 'Startup upside higher but more variable.' },
       { step: 'Recommendation', detail: 'Startup at 68% confidence.' },
+    ],
+    biases: [
+      {
+        name: 'Confirmation Bias',
+        explanation:
+          'Your context cites startup success stories while omitting base-rate failure data.',
+        impact: 'Risk side of the startup option may be systematically underweighted.',
+        recommendation:
+          'List three concrete ways the startup path could fail before deciding.',
+        severity: 'medium',
+      },
     ],
     options: [
       {

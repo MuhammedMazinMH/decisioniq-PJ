@@ -1,7 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
   Check,
@@ -15,55 +16,152 @@ import {
 import { PageShell } from '@/components/app/page-shell'
 import { Button } from '@/components/ui/button'
 import { ANALYSIS_STEPS } from '@/lib/decision-data'
-
-const extracted = [
-  {
-    icon: FileText,
-    label: 'Documents parsed',
-    value: '3 files',
-    detail: 'Offer letters & resume',
-  },
-  {
-    icon: Target,
-    label: 'Priorities mapped',
-    value: '6 criteria',
-    detail: 'Growth & learning weighted',
-  },
-  {
-    icon: Scale,
-    label: 'Options detected',
-    value: '3 options',
-    detail: 'Ready for scoring',
-  },
-  {
-    icon: Gauge,
-    label: 'Confidence est.',
-    value: 'High',
-    detail: 'Sufficient signal found',
-  },
-]
+import { useDecision } from '@/lib/decision-store'
 
 const STEP_MS = 850
+const LIVE_STEP_MS = 1400
 
 export default function AnalysisPage() {
   const router = useRouter()
+  const store = useDecision()
+  const isLive = store.input !== null
+
   const [current, setCurrent] = useState(0)
+  const [aiDone, setAiDone] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const startedRef = useRef(false)
+
   const total = ANALYSIS_STEPS.length
-  const done = current >= total
+  // In live mode, the animation can finish visually only after the AI returns.
+  const done = isLive ? current >= total && aiDone : current >= total
 
+  // Kick off the real AI analysis once (live mode only)
   useEffect(() => {
-    if (done) return
-    const t = setTimeout(() => setCurrent((c) => c + 1), STEP_MS)
+    if (!isLive || startedRef.current) return
+    startedRef.current = true
+
+    async function run() {
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: store.input?.title,
+            decisionType: store.input?.decisionType,
+            priorities: store.input?.priorities,
+            context: store.input?.context,
+            documentText: store.documentText,
+            entities: store.extraction?.entities ?? [],
+            answers: store.answers,
+          }),
+        })
+        if (!res.ok) throw new Error('Analysis request failed')
+        const data = await res.json()
+        if (data.error) throw new Error(data.error)
+        store.setResult(data)
+        setAiDone(true)
+      } catch (e) {
+        console.error('[v0] analysis failed:', e)
+        setError(
+          'The reasoning engine hit an error. Please try again or explore a demo scenario.',
+        )
+      }
+    }
+    run()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLive])
+
+  // Step animation. In live mode, hold on the last step until the AI returns.
+  useEffect(() => {
+    if (error) return
+    if (current >= total) return
+    if (isLive && current === total - 1 && !aiDone) return // hold
+    const t = setTimeout(
+      () => setCurrent((c) => c + 1),
+      isLive ? LIVE_STEP_MS : STEP_MS,
+    )
     return () => clearTimeout(t)
-  }, [current, done])
+  }, [current, total, isLive, aiDone, error])
+
+  // When AI finishes while animation is held, release the final step.
+  useEffect(() => {
+    if (isLive && aiDone && current === total - 1) {
+      const t = setTimeout(() => setCurrent(total), 600)
+      return () => clearTimeout(t)
+    }
+  }, [isLive, aiDone, current, total])
 
   useEffect(() => {
-    if (!done) return
+    if (!done || error) return
     const t = setTimeout(() => router.push('/results'), 1200)
     return () => clearTimeout(t)
-  }, [done, router])
+  }, [done, error, router])
 
   const progress = Math.round((Math.min(current, total) / total) * 100)
+
+  const filesCount = store.extraction?.files.length ?? 0
+  const optionsCount = store.result?.options.length ?? 0
+  const prioritiesCount = store.input?.priorities.length ?? 0
+
+  const extracted = isLive
+    ? [
+        {
+          icon: FileText,
+          label: 'Documents parsed',
+          value: filesCount ? `${filesCount} file${filesCount === 1 ? '' : 's'}` : 'Context only',
+          detail: filesCount
+            ? store.extraction?.files[0]?.status ?? 'Parsed'
+            : 'Using typed context',
+        },
+        {
+          icon: Target,
+          label: 'Priorities mapped',
+          value: prioritiesCount ? `${prioritiesCount} criteria` : 'Inferred',
+          detail: prioritiesCount
+            ? 'Ranked weights applied'
+            : 'AI inferred weighting',
+        },
+        {
+          icon: Scale,
+          label: 'Options detected',
+          value: optionsCount ? `${optionsCount} options` : 'Detecting…',
+          detail: optionsCount ? 'Ready for scoring' : 'Identifying alternatives',
+        },
+        {
+          icon: Gauge,
+          label: 'Confidence est.',
+          value: store.result ? `${store.result.confidence}%` : 'Computing…',
+          detail: store.result
+            ? 'Signal strength assessed'
+            : 'Awaiting full reasoning',
+        },
+      ]
+    : [
+        {
+          icon: FileText,
+          label: 'Documents parsed',
+          value: '3 files',
+          detail: 'Offer letters & resume',
+        },
+        {
+          icon: Target,
+          label: 'Priorities mapped',
+          value: '6 criteria',
+          detail: 'Growth & learning weighted',
+        },
+        {
+          icon: Scale,
+          label: 'Options detected',
+          value: '3 options',
+          detail: 'Ready for scoring',
+        },
+        {
+          icon: Gauge,
+          label: 'Confidence est.',
+          value: 'High',
+          detail: 'Sufficient signal found',
+        },
+      ]
 
   return (
     <PageShell>
@@ -73,12 +171,18 @@ export default function AnalysisPage() {
           Reasoning Engine Active
         </span>
         <h1 className="mt-4 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
-          {done ? 'Analysis complete' : 'Analyzing your decision'}
+          {error
+            ? 'Analysis interrupted'
+            : done
+              ? 'Analysis complete'
+              : 'Analyzing your decision'}
         </h1>
         <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
-          {done
-            ? 'DecisionIQ has finished reasoning through every trade-off.'
-            : 'DecisionIQ is reading your documents, weighing priorities, and simulating outcomes.'}
+          {error
+            ? error
+            : done
+              ? 'DecisionIQ has finished reasoning through every trade-off.'
+              : 'DecisionIQ is reading your documents, weighing priorities, and simulating outcomes.'}
         </p>
       </div>
 
@@ -103,6 +207,26 @@ export default function AnalysisPage() {
         </div>
       </div>
 
+      {error && (
+        <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-3 rounded-2xl border border-border bg-card/60 p-6 text-center backdrop-blur-xl sm:flex-row sm:justify-center">
+          <Button
+            render={<Link href="/decision" />}
+            nativeButton={false}
+            className="gap-2"
+          >
+            Try again
+          </Button>
+          <Button
+            render={<Link href="/demo" />}
+            nativeButton={false}
+            variant="outline"
+            className="bg-transparent"
+          >
+            Explore demo scenarios
+          </Button>
+        </div>
+      )}
+
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.3fr_1fr]">
         {/* Reasoning steps */}
         <div
@@ -116,7 +240,7 @@ export default function AnalysisPage() {
           <ol className="flex flex-col gap-2.5">
             {ANALYSIS_STEPS.map((step, index) => {
               const isDone = index < current
-              const isActive = index === current
+              const isActive = index === current && !error
               return (
                 <li
                   key={step.label}
@@ -198,7 +322,7 @@ export default function AnalysisPage() {
                 Redirecting to your results…
               </p>
               <Button
-                render={<a href="/results" />}
+                render={<Link href="/results" />}
                 nativeButton={false}
                 className="mt-3 w-full gap-2"
               >

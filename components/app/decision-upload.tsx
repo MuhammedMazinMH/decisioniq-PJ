@@ -8,6 +8,7 @@ export type UploadedFile = {
   id: string
   name: string
   size: string
+  file?: File
 }
 
 const SAMPLE_FILES: UploadedFile[] = [
@@ -43,6 +44,7 @@ export function DecisionUpload({
       id: `${Date.now()}-${i}`,
       name: f.name,
       size: formatSize(f.size),
+      file: f,
     }))
     onChange([...files, ...incoming])
   }

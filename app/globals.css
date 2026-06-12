@@ -40,6 +40,7 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   --color-success: var(--success);
+  --color-warning: var(--warning);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -70,6 +71,7 @@
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.62 0.19 255);
   --success: oklch(0.72 0.17 160);
+  --warning: oklch(0.8 0.14 80);
   --chart-1: oklch(0.62 0.19 255);
   --chart-2: oklch(0.6 0.2 295);
   --chart-3: oklch(0.72 0.17 160);
