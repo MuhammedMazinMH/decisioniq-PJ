@@ -24,7 +24,7 @@ export function ReasoningPreview() {
   return (
     <section
       id="reasoning"
-      className="relative scroll-mt-20 py-20 md:py-28"
+      className="relative scroll-mt-20 overflow-hidden py-20 md:py-28"
       aria-labelledby="reasoning-heading"
     >
       <div

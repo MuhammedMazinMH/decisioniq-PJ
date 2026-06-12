@@ -3,7 +3,6 @@ import {
   ArrowRight,
   CheckCircle2,
   FileSearch,
-  Play,
   Scale,
   Sparkles,
   Target,
@@ -55,10 +54,6 @@ export function Hero() {
             <Button size="lg" className="gap-2">
               Analyze My Decision
               <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-            <Button size="lg" variant="outline" className="gap-2 bg-transparent">
-              <Play className="size-4" aria-hidden="true" />
-              Watch Demo
             </Button>
           </div>
 
