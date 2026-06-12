@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
   ArrowRight,
@@ -51,7 +52,12 @@ export function Hero() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
-            <Button size="lg" className="gap-2">
+            <Button
+              render={<Link href="/decision" />}
+              nativeButton={false}
+              size="lg"
+              className="gap-2"
+            >
               Analyze My Decision
               <ArrowRight className="size-4" aria-hidden="true" />
             </Button>

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { BrainCircuit } from 'lucide-react'
 
@@ -38,13 +39,21 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <Button
+            render={<Link href="/demo" />}
+            nativeButton={false}
             variant="ghost"
             size="sm"
             className="hidden text-muted-foreground sm:inline-flex"
           >
-            Sign In
+            View Demo
           </Button>
-          <Button size="sm">Get Started</Button>
+          <Button
+            render={<Link href="/decision" />}
+            nativeButton={false}
+            size="sm"
+          >
+            Get Started
+          </Button>
         </div>
       </div>
     </header>
