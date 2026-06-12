@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       .join('\n\n')
 
     const { output } = await generateText({
-      model: 'google/gemini-3.5-flash',
+      model: 'openai/gpt-5-mini',
       system:
         'You are a document intelligence engine inside DecisionIQ, a career decision platform. ' +
         'You extract structured facts from career documents (offer letters, resumes, certifications, admission letters). ' +

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       : ''
 
     const { output } = await generateText({
-      model: 'google/gemini-3.5-flash',
+      model: 'openai/gpt-5-mini',
       system:
         'You are an adaptive interviewer inside DecisionIQ, a career decision intelligence platform. ' +
         'You generate the 3-4 most decision-relevant clarifying questions based on what was actually found in the user documents and context. ' +

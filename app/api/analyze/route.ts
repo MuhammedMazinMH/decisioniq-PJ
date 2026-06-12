@@ -56,7 +56,7 @@ export async function POST(req: Request) {
       : 'None'
 
     const { output } = await generateText({
-      model: 'google/gemini-3.5-flash',
+      model: 'openai/gpt-5-mini',
       system: SYSTEM,
       prompt:
         `DECISION TITLE: ${title || 'Untitled decision'}\n` +
@@ -70,7 +70,31 @@ export async function POST(req: Request) {
       output: Output.object({ schema: analysisSchema }),
     })
 
-    return Response.json(output)
+    // Defensive normalization: some models return confidence as a 0-1
+    // fraction despite instructions. Always present an integer percent.
+    let confidence = output.confidence
+    if (confidence > 0 && confidence <= 1) confidence = confidence * 100
+    confidence = Math.round(Math.min(95, Math.max(40, confidence)))
+
+    // Ensure recommendedId points at a real option; fall back to the
+    // highest weighted-score option if the model hallucinated an id.
+    let recommendedId = output.recommendedId
+    if (!output.options.some((o) => o.id === recommendedId)) {
+      const weights = Object.fromEntries(
+        output.criteria.map((c) => [c.key, c.weight]),
+      )
+      const best = [...output.options].sort((a, b) => {
+        const total = (o: (typeof output.options)[number]) =>
+          Object.entries(o.scores).reduce(
+            (sum, [k, v]) => sum + v * (weights[k] ?? 0),
+            0,
+          )
+        return total(b) - total(a)
+      })[0]
+      recommendedId = best.id
+    }
+
+    return Response.json({ ...output, confidence, recommendedId })
   } catch (error) {
     console.error('[v0] /api/analyze error:', error)
     return Response.json(

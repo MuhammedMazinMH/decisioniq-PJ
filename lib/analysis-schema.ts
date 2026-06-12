@@ -113,7 +113,13 @@ export const analysisSchema = z.object({
     .min(2)
     .max(4),
   recommendedId: z.string().describe('id of the recommended option'),
-  confidence: z.number().min(0).max(100),
+  confidence: z
+    .number()
+    .min(0)
+    .max(100)
+    .describe(
+      'Confidence as an integer PERCENTAGE between 55 and 95 (e.g. 82 — never a 0-1 fraction)',
+    ),
   summary: z
     .string()
     .describe('2-3 sentence reasoning summary for the recommendation'),
