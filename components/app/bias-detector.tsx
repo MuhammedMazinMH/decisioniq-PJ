@@ -23,16 +23,28 @@ const SEVERITY_STYLES: Record<
 export function BiasDetector({ biases }: { biases: BiasFinding[] }) {
   if (!biases.length) {
     return (
-      <div className="flex items-start gap-3 rounded-2xl border border-success/30 bg-success/5 p-6 backdrop-blur-xl">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
-          <ShieldCheck className="size-5" aria-hidden="true" />
-        </span>
-        <div>
-          <h3 className="font-semibold">No significant biases detected</h3>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-            Your stated reasoning appears grounded in your own goals and
-            priorities rather than external pressure or cognitive shortcuts.
-          </p>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start gap-3 rounded-2xl border border-success/30 bg-success/5 p-6 backdrop-blur-xl">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
+            <ShieldCheck className="size-5" aria-hidden="true" />
+          </span>
+          <div className="flex-1">
+            <div className="mb-2 flex items-center gap-2">
+              <h3 className="font-semibold">Potential Bias Scan Complete</h3>
+              <span className="rounded-full border border-success/40 bg-success/20 px-2 py-0.5 text-xs font-medium text-success">
+                Bias Risk: Low
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              <strong className="text-foreground">No major cognitive biases detected.</strong>
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Your decision appears consistent with your stated goals, priorities, and long-term objectives.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              DecisionIQ evaluated common decision-making biases including Social Proof Bias, Confirmation Bias, Sunk Cost Fallacy, Loss Aversion, Status Quo Bias, and Recency Bias.
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -52,7 +64,10 @@ export function BiasDetector({ biases }: { biases: BiasFinding[] }) {
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
                   <BrainCog className="size-5" aria-hidden="true" />
                 </span>
-                <h3 className="font-semibold">{bias.name}</h3>
+                <div>
+                  <h3 className="font-semibold">{bias.name}</h3>
+                  <p className="text-xs text-muted-foreground">Severity:</p>
+                </div>
               </div>
               <span
                 className={cn(
@@ -60,14 +75,19 @@ export function BiasDetector({ biases }: { biases: BiasFinding[] }) {
                   severity.badge,
                 )}
               >
-                {severity.label}
+                {bias.severity.charAt(0).toUpperCase() + bias.severity.slice(1)}
               </span>
             </div>
 
             <div className="flex flex-col gap-3 text-sm">
-              <p className="leading-relaxed text-foreground/90">
-                {bias.explanation}
-              </p>
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Explanation
+                </p>
+                <p className="leading-relaxed text-foreground/90">
+                  {bias.explanation}
+                </p>
+              </div>
 
               <div className="flex items-start gap-2 rounded-xl border border-border/60 bg-background/40 p-3">
                 <AlertTriangle
@@ -91,7 +111,7 @@ export function BiasDetector({ biases }: { biases: BiasFinding[] }) {
                 />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Recommendation
+                    Suggested Correction
                   </p>
                   <p className="mt-0.5 leading-relaxed text-muted-foreground">
                     {bias.recommendation}

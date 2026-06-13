@@ -215,8 +215,8 @@ export function ResultsContent({ scenarioId }: { scenarioId?: string }) {
         <section aria-labelledby="trace-heading">
           <SectionTitle
             index="06"
-            title="AI Reasoning Trace"
-            description="The complete reasoning path behind this recommendation."
+            title="Decision Intelligence Trace"
+            description="Transparent reasoning path showing how DecisionIQ arrived at its recommendation."
           />
           <ReasoningTimeline nodes={scenario.reasoning} />
         </section>
