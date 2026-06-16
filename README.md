@@ -14,7 +14,6 @@
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
   <img src="https://img.shields.io/badge/status-active-success?style=flat-square" alt="Status" />
   <img src="https://img.shields.io/badge/PRs-welcome-blueviolet?style=flat-square" alt="PRs Welcome" />
-  <img src="https://img.shields.io/badge/Hackathon-Agents_League_2026-blue?style=flat-square" alt="Hackathon" />
 </p>
 
 ---
@@ -33,7 +32,6 @@
 - [Local Development](#-local-development)
 - [Project Structure](#-project-structure)
 - [Future Scope](#-future-scope)
-- [Hackathon Submission](#-hackathon-submission)
 - [Author](#-author)
 
 ---
@@ -305,18 +303,6 @@ decisioniq/
 - **Financial Decision Support** — Salary growth modeling, cost-of-living adjustments, and ROI projections.
 - **Enterprise Decision Intelligence** — Organization-wide decision frameworks for hiring and strategy.
 - **Personalized Decision Memory** — Persistent profiles that learn a user's values and improve recommendations over time.
-
----
-
-## 🏆 Hackathon Submission
-
-| | |
-| --- | --- |
-| **Challenge** | Creative Apps |
-| **Theme** | AI-Assisted Decision Intelligence |
-| **Built For** | Agents League Hackathon 2026 |
-
-DecisionIQ was built to demonstrate how AI can move beyond generic chatbot answers toward **transparent, structured, document-grounded decision intelligence** — giving users not just an answer, but a defensible reasoning trail they can trust.
 
 ---
 
